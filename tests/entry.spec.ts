@@ -3,6 +3,7 @@ import { type Page, BrowserContext } from "@playwright/test";
 import _, { result } from "lodash";
 import * as fs from "fs";
 import * as path from "path";
+import retry from "async-retry";
 
 import { sleep } from "../utils";
 import moment from "moment";
@@ -27,6 +28,11 @@ async function processUser(page: Page, username: string): Promise<any> {
     /i.instagram.com\/api\/v1\/users\/web_profile_info*/
   );
   const body = await resp.json();
+  if (body.spam) {
+    return {
+      username,
+    };
+  }
 
   const user = body.data.user;
   return user;
@@ -57,12 +63,14 @@ async function processTag(
   );
 
   const results = await Promise.all(
-    _.map(media, (m) => processMedium(m, context))
+    _.map(media, (m) =>
+      retry(async () => processMedium(m, context), { retries: 5 })
+    )
   );
   await page.close();
   return results.map(({ user, postCode }) => ({
     username: user.username,
-    followers: user.edge_followed_by.count,
+    followers: _.get(user, "edge_followed_by.count", "?"),
     postCode: postCode,
     tag,
   }));
@@ -77,7 +85,9 @@ async function processTags(
   const chunked = _.chunk(tags, 2);
   for (const chunk of chunked) {
     const res: Array<any> = await Promise.all(
-      _.map(chunk, (tag) => processTag(tag, context))
+      _.map(chunk, (tag) =>
+        retry(async () => processTag(tag, context), { retries: 2 })
+      )
     );
     res.forEach((v) => results.push(v));
   }
