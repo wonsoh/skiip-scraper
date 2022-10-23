@@ -13,10 +13,15 @@ USERNAME=username
 PASSWORD=password
 ```
 
+### Setting up for the first time
+Run 
+```sh
+npm install
+```
+
 ### Running the script
-1. Run `npm install`
-2. Then, run `npm run execute`
-3. **Your new file will be available in `files/date_time.csv` file**
+1. Run `npm run execute`
+2. **Your new file will be available in `files/date_time.csv` file**
 
 
 ### Changing the tags
