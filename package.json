@@ -1,0 +1,21 @@
+{
+  "name": "skiip-scraper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:wonsoh/skiip-scraper.git",
+  "author": "Won S. Oh <wonsoh@live.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.27.1",
+    "@types/lodash": "^4.14.186"
+  },
+  "scripts": {
+    "execute": "env-cmd playwright test"
+  },
+  "dependencies": {
+    "env-cmd": "^10.1.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "xlsx": "^0.18.5"
+  }
+}
